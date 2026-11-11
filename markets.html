@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeProFX Community — Live Synthetic Markets &amp; Signals</title>
+  <meta name="description" content="Live Deriv synthetic-indices dashboard with real-time momentum signals across all Volatility, Boom, Crash, Jump and Step markets. Educational use only." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b16;
+      --bg-grad: radial-gradient(1200px 600px at 80% -10%, #0d1b33 0%, transparent 60%), radial-gradient(900px 500px at 0% 0%, #0a1726 0%, transparent 55%), #070b16;
+      --panel: #0d1526;
+      --panel-2: #111c31;
+      --border: #1e2d47;
+      --text: #e8eef7;
+      --muted: #8597b3;
+      --brand: #17e0c1;
+      --brand-dim: #0fb9a3;
+      --buy: #17e0c1;
+      --sell: #ff4d6d;
+      --neutral: #f7a53b;
+      --font-sans: "Space Grotesk", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-grad);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px 64px; }
+
+    header.top {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(7, 11, 22, 0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .top-inner {
+      max-width: 1240px; margin: 0 auto; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--brand), #0a8f9e);
+      display: grid; place-items: center; color: #04231f; font-weight: 700; font-size: 17px;
+      box-shadow: 0 0 22px rgba(23, 224, 193, 0.35);
+    }
+    .brand b { font-size: 16px; letter-spacing: -0.3px; }
+    .brand .tag {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--brand); font-weight: 600;
+    }
+    .nav { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      font-family: var(--font-sans); font-weight: 600; font-size: 13px;
+      padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--panel-2); color: var(--text); cursor: pointer; transition: .15s;
+    }
+    .btn:hover { border-color: var(--brand-dim); color: var(--brand); }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-dim));
+      color: #04231f; border: none;
+    }
+    .status { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--neutral); box-shadow: 0 0 10px currentColor; }
+    .dot.live { background: var(--buy); animation: pulse 1.6s infinite; }
+    .dot.down { background: var(--sell); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .hero { padding: 38px 0 22px; }
+    .hero h1 { font-size: clamp(26px, 4vw, 40px); margin: 0 0 10px; letter-spacing: -1px; line-height: 1.08; }
+    .hero h1 .accent { color: var(--brand); }
+    .hero p { color: var(--muted); max-width: 680px; font-size: 15px; line-height: 1.55; margin: 0; }
+
+    .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 22px 0 18px; }
+    .search {
+      flex: 1; min-width: 200px; display: flex; align-items: center; gap: 9px;
+      background: var(--panel); border: 1px solid var(--border); border-radius: 11px; padding: 10px 14px;
+    }
+    .search input { background: none; border: none; outline: none; color: var(--text); font-family: var(--font-sans); font-size: 14px; width: 100%; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      font-size: 12px; font-weight: 600; padding: 8px 13px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--panel); color: var(--muted); cursor: pointer; transition: .15s;
+    }
+    .chip.active { color: #04231f; background: var(--brand); border-color: var(--brand); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .card {
+      background: linear-gradient(180deg, var(--panel-2), var(--panel));
+      border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+      position: relative; overflow: hidden; transition: .18s;
+    }
+    .card:hover { border-color: var(--brand-dim); transform: translateY(-2px); }
+    .card .row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .card .name { font-weight: 600; font-size: 15px; line-height: 1.2; }
+    .card .sym { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .sig {
+      font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+      padding: 5px 9px; border-radius: 8px; white-space: nowrap;
+    }
+    .sig.buy { color: var(--buy); background: rgba(23,224,193,.12); border: 1px solid rgba(23,224,193,.3); }
+    .sig.sell { color: var(--sell); background: rgba(255,77,109,.12); border: 1px solid rgba(255,77,109,.3); }
+    .sig.neutral { color: var(--neutral); background: rgba(247,165,59,.12); border: 1px solid rgba(247,165,59,.3); }
+    .price { font-family: var(--font-mono); font-size: 26px; font-weight: 700; margin: 14px 0 2px; letter-spacing: -0.5px; }
+    .chg { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+    .chg.up { color: var(--buy); } .chg.down { color: var(--sell); } .chg.flat { color: var(--muted); }
+    .spark { width: 100%; height: 44px; margin-top: 12px; display: block; }
+    .meter { height: 6px; border-radius: 4px; background: #0a1322; margin-top: 12px; overflow: hidden; }
+    .meter > i { display: block; height: 100%; border-radius: 4px; transition: width .4s, background .4s; }
+    .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 11px; font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+    .loading { text-align: center; padding: 70px 0; color: var(--muted); }
+    .spin { width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--brand); border-radius: 50%; margin: 0 auto 16px; animation: rot 0.9s linear infinite; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+
+    .disclaimer {
+      margin-top: 36px; padding: 16px 18px; border-radius: 13px;
+      border: 1px solid var(--border); background: var(--panel); color: var(--muted);
+      font-size: 12px; line-height: 1.6;
+    }
+    .disclaimer b { color: var(--text); }
+    footer.ft { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; font-family: var(--font-mono); }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="/">
+        <span class="logo">T</span>
+        <span>
+          <b>TradeProFX</b> <span class="tag">Community</span>
+        </span>
+      </a>
+      <div class="nav">
+        <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">connecting…</span></div>
+        <a class="btn primary" href="/">Chart Scanner →</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <h1>Live <span class="accent">Synthetic Markets</span> &amp; Momentum Signals</h1>
+      <p>Real-time pricing for every Deriv synthetic index — Volatility, Boom, Crash, Jump, Step and Range Break — streamed live from the Deriv API, with a disciplined educational momentum read on each market. Not financial advice.</p>
+    </section>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search" placeholder="Search a market (e.g. Volatility 75, Boom, Crash)…" />
+      </div>
+      <div class="chips" id="chips">
+        <span class="chip active" data-f="all">All</span>
+        <span class="chip" data-f="buy">Buy</span>
+        <span class="chip" data-f="sell">Sell</span>
+        <span class="chip" data-f="neutral">Neutral</span>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="loading" class="loading"><div class="spin"></div>Connecting to the Deriv market feed…</div>
+
+    <div class="disclaimer">
+      <b>Educational use only — not financial advice.</b> Signals shown here are a mechanical short-term momentum reading (fast vs. slow moving average plus rate-of-change) computed in your browser from live Deriv tick data. They are not predictions, recommendations or guarantees. Synthetic indices are high-risk leveraged products; trading them can result in the loss of all invested capital. Always do your own analysis and never risk money you cannot afford to lose. Market data provided by the Deriv API.
+    </div>
+    <footer class="ft">TradeProFX Community · Live Synthetic Markets Desk · data via Deriv API</footer>
+  </div>
+
+  <script>
+    // ---- Deriv WebSocket live market feed -------------------------------
+    // Public market data needs an app_id. 1089 is Deriv's shared public id.
+    // For production, register your own at https://api.deriv.com and swap it in.
+    const APP_ID = 1089;
+    const WS_URL = "wss://ws.derivws.com/websockets/v3?app_id=" + APP_ID;
+    const HISTORY = 60;      // seed ticks per market
+    const BUFFER = 150;      // max retained ticks per market
+    const FAST = 8, SLOW = 25, THRESH = 0.00035; // momentum thresholds
+
+    const state = {};        // symbol -> { name, prices:[], el, lastSig }
+    let ws, filter = "all", query = "";
+
+    const grid = document.getElementById("grid");
+    const loading = document.getElementById("loading");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+
+    function setStatus(kind, text) {
+      statusDot.className = "dot" + (kind === "live" ? " live" : kind === "down" ? " down" : "");
+      statusText.textContent = text;
+    }
+
+    function decimals(p) {
+      const s = String(p);
+      return s.includes(".") ? s.split(".")[1].length : 2;
+    }
+    function fmt(p, d) { return Number(p).toFixed(d); }
+
+    function sma(arr, n) {
+      if (arr.length < n) n = arr.length;
+      let s = 0; for (let i = arr.length - n; i < arr.length; i++) s += arr[i];
+      return s / n;
+    }
+
+    function computeSignal(prices) {
+      if (prices.length < 10) return { sig: "neutral", strength: 0, label: "WARMING UP" };
+      const fast = sma(prices, FAST), slow = sma(prices, SLOW);
+      const mom = (fast - slow) / slow;                 // trend direction
+      const roc = (prices[prices.length - 1] - prices[prices.length - FAST]) / prices[prices.length - FAST];
+      const score = (mom * 0.6 + roc * 0.4);
+      const strength = Math.max(0, Math.min(100, Math.round(Math.abs(score) / (THRESH * 3) * 100)));
+      if (score > THRESH) return { sig: "buy", strength, label: "BULLISH MOMENTUM" };
+      if (score < -THRESH) return { sig: "sell", strength, label: "BEARISH MOMENTUM" };
+      return { sig: "neutral", strength, label: "RANGING / NO EDGE" };
+    }
+
+    function sparkline(prices) {
+      const n = Math.min(prices.length, 48);
+      const slice = prices.slice(prices.length - n);
+      const min = Math.min(...slice), max = Math.max(...slice);
+      const range = max - min || 1;
+      const w = 260, h = 44;
+      const pts = slice.map((p, i) => {
+        const x = (i / (n - 1 || 1)) * w;
+        const y = h - ((p - min) / range) * (h - 6) - 3;
+        return x.toFixed(1) + "," + y.toFixed(1);
+      }).join(" ");
+      const up = slice[slice.length - 1] >= slice[0];
+      const color = up ? "var(--buy)" : "var(--sell)";
+      return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+        '<polyline fill="none" stroke="' + color + '" stroke-width="2" points="' + pts + '"/></svg>';
+    }
+
+    function cardHtml(sym, s) {
+      const prices = s.prices;
+      const d = s.dec;
+      const price = prices.length ? fmt(prices[prices.length - 1], d) : "—";
+      const first = prices[0] || prices[prices.length - 1] || 0;
+      const last = prices[prices.length - 1] || 0;
+      const chgPct = first ? ((last - first) / first) * 100 : 0;
+      const chgCls = chgPct > 0.0001 ? "up" : chgPct < -0.0001 ? "down" : "flat";
+      const chgTxt = (chgPct >= 0 ? "+" : "") + chgPct.toFixed(3) + "%";
+      const sg = computeSignal(prices);
+      s.lastSig = sg.sig;
+      const meterColor = sg.sig === "buy" ? "var(--buy)" : sg.sig === "sell" ? "var(--sell)" : "var(--neutral)";
+      return (
+        '<div class="row1">' +
+          '<div><div class="name">' + s.name + '</div><div class="sym">' + sym + '</div></div>' +
+          '<span class="sig ' + sg.sig + '">' + (sg.sig === "buy" ? "BUY" : sg.sig === "sell" ? "SELL" : "NEUTRAL") + '</span>' +
+        '</div>' +
+        '<div class="price">' + price + '</div>' +
+        '<div class="chg ' + chgCls + '">' + chgTxt + ' <span style="color:var(--muted)">· window</span></div>' +
+        sparkline(prices) +
+        '<div class="meter"><i style="width:' + sg.strength + '%;background:' + meterColor + '"></i></div>' +
+        '<div class="foot"><span>' + sg.label + '</span><span>' + sg.strength + '% strength</span></div>'
+      );
+    }
+
+    function applyFilter() {
+      Object.keys(state).forEach(sym => {
+        const s = state[sym];
+        if (!s.el) return;
+        const matchQ = !query || s.name.toLowerCase().includes(query) || sym.toLowerCase().includes(query);
+        const matchF = filter === "all" || s.lastSig === filter;
+        s.el.style.display = (matchQ && matchF) ? "" : "none";
+      });
+    }
+
+    function render(sym) {
+      const s = state[sym];
+      if (!s.el) {
+        s.el = document.createElement("div");
+        s.el.className = "card";
+        grid.appendChild(s.el);
+      }
+      s.el.innerHTML = cardHtml(sym, s);
+      applyFilter();
+    }
+
+    function connect() {
+      ws = new WebSocket(WS_URL);
+      ws.onopen = () => {
+        setStatus("live", "connecting…");
+        ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
+      };
+      ws.onclose = () => { setStatus("down", "disconnected — retrying"); setTimeout(connect, 2500); };
+      ws.onerror = () => setStatus("down", "connection error");
+      ws.onmessage = (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.error) { console.warn(data.error.message); return; }
+
+        if (data.msg_type === "active_symbols") {
+          const synths = data.active_symbols
+            .filter(x => x.market === "synthetic_index" && x.exchange_is_open !== 0)
+            .sort((a, b) => a.display_name.localeCompare(b.display_name));
+          loading.style.display = "none";
+          setStatus("live", "live · " + synths.length + " markets");
+          synths.forEach((x, i) => {
+            state[x.symbol] = { name: x.display_name, prices: [], el: null, dec: 2, lastSig: "neutral" };
+            // stagger subscriptions slightly to be gentle on the socket
+            setTimeout(() => {
+              ws.send(JSON.stringify({ ticks_history: x.symbol, end: "latest", count: HISTORY, style: "ticks", subscribe: 1 }));
+            }, i * 60);
+          });
+        }
+
+        if (data.msg_type === "history") {
+          const sym = data.echo_req.ticks_history;
+          const s = state[sym];
+          if (!s) return;
+          s.prices = data.history.prices.map(Number);
+          s.dec = decimals(data.history.prices[data.history.prices.length - 1]);
+          render(sym);
+        }
+
+        if (data.msg_type === "tick") {
+          const sym = data.tick.symbol;
+          const s = state[sym];
+          if (!s) return;
+          s.prices.push(Number(data.tick.quote));
+          if (s.prices.length > BUFFER) s.prices.shift();
+          s.dec = decimals(data.tick.quote);
+          render(sym);
+        }
+      };
+    }
+
+    // ---- UI wiring ------------------------------------------------------
+    document.getElementById("search").addEventListener("input", (e) => { query = e.target.value.trim().toLowerCase(); applyFilter(); });
+    document.getElementById("chips").addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      filter = chip.dataset.f;
+      applyFilter();
+    });
+
+    connect();
+  </script>
+</body>
+</html>

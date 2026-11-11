@@ -1,0 +1,10 @@
+{
+  "name": "tradeprofx-community",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TradeProFX Community — educational chart analysis desk and live Deriv synthetic-markets signals.",
+  "engines": {
+    "node": "20.x"
+  }
+}

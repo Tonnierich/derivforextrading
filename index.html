@@ -1,18 +1,79 @@
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForexLens - Educational Forex Chart Analysis Assistant</title>
-    <meta name="description" content="Analyze candlestick chart screenshots across Price Action, Support/Resistance, and Indicators with scenario planning, risk-reward calculation, and educational discipline.">
-    <meta property="og:title" content="ForexLens - Educational Forex Chart Analysis Assistant">
-    <meta property="og:description" content="Analyze candlestick chart screenshots across Price Action, Support/Resistance, and Indicators with scenario planning, risk-reward calculation, and educational discipline.">
+    <title>TradeProFX Community — AI Chart Scanner &amp; Trade Signals</title>
+    <meta name="description" content="TradeProFX Community: upload any candlestick chart and get an instant educational Buy/Sell plan with exact entry, stop loss and take-profit, plus live Deriv synthetic-markets signals.">
+    <meta property="og:title" content="TradeProFX Community — AI Chart Scanner &amp; Trade Signals">
+    <meta property="og:description" content="Scan candlestick charts for Price Action, Support/Resistance and Indicator confluence with exact SL/TP and risk-reward. Plus live synthetic-markets signals. Educational only.">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2317e0c1'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='%2304231f'%3ET%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="module" src="js/index-y4TOGBfo.js"></script>
     <link rel="stylesheet" crossorigin="" href="css/index-DkvxZiaz.css">
+    <style>
+      /* ===== TradeProFX Community brand theme override =====================
+         The app is Tailwind v4, so every utility reads a CSS variable.
+         Redefining these :root tokens (after the compiled sheet) recolors and
+         re-types the entire UI in one place — navy base + signature teal. */
+      :root {
+        /* Typography */
+        --font-sans: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        --default-font-family: var(--font-sans);
+        --default-mono-font-family: var(--font-mono);
+
+        /* Signature accent: emerald ramp shifted to TradeProFX aqua-teal */
+        --color-emerald-50:  oklch(97% .02 185);
+        --color-emerald-100: oklch(94% .05 185);
+        --color-emerald-200: oklch(90% .09 185);
+        --color-emerald-300: oklch(84% .12 185);
+        --color-emerald-400: oklch(79% .14 185);
+        --color-emerald-500: oklch(73% .14 185);
+        --color-emerald-600: oklch(64% .12 186);
+        --color-emerald-700: oklch(53% .10 187);
+        --color-emerald-800: oklch(43% .08 188);
+        --color-emerald-900: oklch(34% .06 189);
+        --color-emerald-950: oklch(25% .05 191);
+
+        /* teal is also used in places — keep it aligned with the accent */
+        --color-teal-400: oklch(79% .14 186);
+        --color-teal-500: oklch(73% .14 186);
+        --color-teal-600: oklch(64% .12 187);
+
+        /* Base surfaces: neutral zinc darks tinted to deep navy */
+        --color-zinc-950: oklch(16% .022 256);
+        --color-zinc-900: oklch(20% .026 256);
+        --color-zinc-800: oklch(27% .030 256);
+        --color-zinc-700: oklch(37% .030 257);
+        --color-zinc-600: oklch(50% .028 258);
+      }
+      body { background: radial-gradient(1100px 560px at 85% -8%, #0d1b33 0%, transparent 58%), radial-gradient(760px 460px at -5% 0%, #0a1726 0%, transparent 55%); background-color: #070b16; }
+
+      /* Floating launcher to the live synthetic-markets desk */
+      #tpfx-live-launch {
+        position: fixed; right: 18px; bottom: 18px; z-index: 9999;
+        display: flex; align-items: center; gap: 9px;
+        font-family: var(--font-sans); font-weight: 600; font-size: 13.5px;
+        padding: 12px 17px; border-radius: 999px; color: #04231f;
+        background: linear-gradient(135deg, #17e0c1, #0fb9a3);
+        box-shadow: 0 8px 26px rgba(23, 224, 193, .32); text-decoration: none;
+        transition: transform .15s, box-shadow .15s;
+      }
+      #tpfx-live-launch:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(23, 224, 193, .45); }
+      #tpfx-live-launch .pulse { width: 9px; height: 9px; border-radius: 50%; background: #04231f; animation: tpfxp 1.5s infinite; }
+      @keyframes tpfxp { 0%,100%{opacity:1} 50%{opacity:.35} }
+      @media (max-width: 640px) { #tpfx-live-launch span.lbl { display: none; } #tpfx-live-launch { padding: 13px; } }
+    </style>
   </head>
   <body>
     <div id="root"></div>
-  
+    <a id="tpfx-live-launch" href="/markets.html" title="Live Deriv synthetic-markets signals">
+      <span class="pulse"></span><span class="lbl">Live Synthetic Markets</span>
+    </a>
+
 
 
 </body></html>
